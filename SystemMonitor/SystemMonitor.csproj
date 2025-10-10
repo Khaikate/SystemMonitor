@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net8.0-windows</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UseWPF>true</UseWPF>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+      <PackageReference Include="jnm2.ReferenceAssemblies.net35" Version="1.0.1">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.4" />
+      <PackageReference Include="LiveCharts" Version="0.9.7" />
+      <PackageReference Include="LiveCharts.WinForms" Version="0.9.7.1" />
+      <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
+      <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
+      <PackageReference Include="PeriodicToDispatcherTimer" Version="1.0.0" />
+      <PackageReference Include="RelaxCoder.WebBrowserSignalR" Version="0.6.2.3" />
+      <PackageReference Include="System.Reactive.Windows.Forms" Version="6.1.0" />
+      <PackageReference Include="XPlat.UI" Version="1.8.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="SystemStarts.cs">
+        <DependentUpon>MainWindow.xaml.cs</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+</Project>
