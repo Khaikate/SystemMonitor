@@ -33,7 +33,6 @@ namespace SystemMonitor
             {
                 cpu.Update();
                 cpuName = cpu.Name;
-                // Use exact sensor names based on user's debug output for maximum reliability
                 cpuLoad = cpu.Sensors.FirstOrDefault(s => s.Name == "CPU Total");
                 cpuTemp = cpu.Sensors.FirstOrDefault(s => s.Name == "CPU Package");
                 cpuClock = cpu.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Clock && s.Name.Contains("Package")) ?? cpu.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Clock);
@@ -48,7 +47,7 @@ namespace SystemMonitor
                 ramAvailable = ram.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Data && s.Name.Contains("Available"));
             }
 
-            var gpu = computer.Hardware.FirstOrDefault(h => h.HardwareType is HardwareType.GpuNvidia or HardwareType.GpuAmd);
+            var gpu = computer.Hardware.FirstOrDefault(h => h.HardwareType is HardwareType.GpuNvidia or HardwareType.GpuAmd or HardwareType.GpuIntel);
             if (gpu != null)
             {
                 gpu.Update();

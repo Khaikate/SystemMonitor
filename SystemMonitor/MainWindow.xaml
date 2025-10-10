@@ -68,11 +68,17 @@
                 <!-- RAM Section -->
                 <TextBlock Text="RAM" Margin="0,10,0,0" Style="{StaticResource HeaderStyle}"/>
                 <ProgressBar Value="{Binding RamLoad}" Foreground="Orange"/>
-                <TextBlock Foreground="Orange">
-                    <Run Text="{Binding RamUsedGB, StringFormat={}{0:F1}}"/>
-                    <Run Text="/" Foreground="#A0A0A0"/>
-                    <Run Text="{Binding RamTotalGB, StringFormat={}{0:F1} GB}" Foreground="#A0A0A0"/>
-                </TextBlock>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="{Binding RamLoad, StringFormat={}{0:F1}%}" Foreground="Orange"/>
+                    <TextBlock Grid.Column="1" HorizontalAlignment="Right">
+                        <Run Text="{Binding RamUsedGB, StringFormat={}{0:F1} GB}" Foreground="Orange"/>
+                        <Run Text="{Binding RamTotalGB, StringFormat={} / {0:F1} GB}" Foreground="#A0A0A0"/>
+                    </TextBlock>
+                </Grid>
 
                 <!-- GPU Section -->
                 <TextBlock Text="{Binding GpuName}" Margin="0,10,0,0" Style="{StaticResource HeaderStyle}"/>
