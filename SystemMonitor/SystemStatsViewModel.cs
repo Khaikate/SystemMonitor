@@ -8,6 +8,7 @@ namespace SystemMonitor;
 public partial class SystemStatsViewModel : ObservableObject
 {
     // CPU
+    [ObservableProperty] private string? cpuName;
     [ObservableProperty] private float? cpuLoad;
     [ObservableProperty] private float? cpuTemp;
     [ObservableProperty] private float? cpuClockGHz;
@@ -22,14 +23,6 @@ public partial class SystemStatsViewModel : ObservableObject
     [ObservableProperty] private float? gpuLoad;
     [ObservableProperty] private float? gpuTemp;
 
-    // Disk
-    [ObservableProperty] private float? diskReadMBs;
-    [ObservableProperty] private float? diskWriteMBs;
-
-    // Network
-    [ObservableProperty] private float? netRecvKBs;
-    [ObservableProperty] private float? netSentKBs;
-
     public async Task RefreshAsync()
     {
         if (!ComputerManager.IsMonitoringAvailable)
@@ -42,6 +35,7 @@ public partial class SystemStatsViewModel : ObservableObject
             var snap = await Task.Run(SystemStats.GetSnapshot);
             if (snap != null)
             {
+                CpuName = snap.CpuName;
                 CpuLoad = snap.CpuLoad;
                 CpuTemp = snap.CpuTemp;
                 CpuClockGHz = snap.CpuClockGHz;
@@ -53,12 +47,6 @@ public partial class SystemStatsViewModel : ObservableObject
                 GpuName = snap.GpuName;
                 GpuLoad = snap.GpuLoad;
                 GpuTemp = snap.GpuTemp;
-
-                DiskReadMBs = snap.DiskReadMBs;
-                DiskWriteMBs = snap.DiskWriteMBs;
-
-                NetRecvKBs = snap.NetRecvKBs;
-                NetSentKBs = snap.NetSentKBs;
             }
         }
         catch (Exception ex)
