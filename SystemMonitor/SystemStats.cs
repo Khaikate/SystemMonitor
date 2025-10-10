@@ -1,78 +1,68 @@
 using LibreHardwareMonitor.Hardware;
 using System;
-using System.Diagnostics;
 using System.Linq;
 
 namespace SystemMonitor
 {
     public static class SystemStats
     {
-        private static ISensor? cpuLoad, cpuTemp, cpuClock;
-        private static string? cpuName;
-        private static ISensor? ramLoad, ramUsed, ramAvailable;
-        private static ISensor? gpuLoad, gpuTemp;
-        private static string? gpuName;
+        private static readonly Computer? computer;
+        private static readonly ISensor? cpuLoad, cpuTemp, cpuClock;
+        private static readonly string? cpuName;
+        private static readonly ISensor? ramLoad, ramUsed, ramAvailable;
+        private static readonly ISensor? gpuLoad, gpuTemp;
+        private static readonly string? gpuName;
 
         static SystemStats()
         {
-            if (!ComputerManager.IsMonitoringAvailable)
-            {
-                Debug.WriteLine("Skipping SystemStats initialization as monitoring is not available.");
-                return;
-            }
+            var computerManager = ComputerManager.Instance;
+            if (!computerManager.IsMonitoringAvailable) return;
 
-            InitializeHardwareSensors();
-        }
+            computer = computerManager.Computer;
 
-        private static void InitializeHardwareSensors()
-        {
-            var computer = ComputerManager.Instance;
-
+            // CPU Sensors
             var cpu = computer.Hardware.FirstOrDefault(h => h.HardwareType == HardwareType.Cpu);
             if (cpu != null)
             {
-                cpu.Update();
                 cpuName = cpu.Name;
-                cpuLoad = cpu.Sensors.FirstOrDefault(s => s.Name == "CPU Total");
-                cpuTemp = cpu.Sensors.FirstOrDefault(s => s.Name == "CPU Package");
-                cpuClock = cpu.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Clock && s.Name.Contains("Package")) ?? cpu.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Clock);
+                cpuLoad = cpu.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Load && s.Name == "CPU Total");
+                cpuTemp = cpu.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Temperature && s.Name.Contains("Package"));
+                // Be less specific to find any clock sensor, increasing compatibility
+                cpuClock = cpu.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Clock);
             }
 
+            // RAM Sensors
             var ram = computer.Hardware.FirstOrDefault(h => h.HardwareType == HardwareType.Memory);
             if (ram != null)
             {
-                ram.Update();
                 ramLoad = ram.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Load);
                 ramUsed = ram.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Data && s.Name.Contains("Used"));
                 ramAvailable = ram.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Data && s.Name.Contains("Available"));
             }
 
+            // GPU Sensors
             var gpu = computer.Hardware.FirstOrDefault(h => h.HardwareType is HardwareType.GpuNvidia or HardwareType.GpuAmd or HardwareType.GpuIntel);
             if (gpu != null)
             {
-                gpu.Update();
                 gpuName = gpu.Name;
                 gpuLoad = gpu.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Load && s.Name.Contains("Core"));
-                gpuTemp = gpu.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Temperature && s.Name.Contains("Core"))
-                          ?? gpu.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Temperature);
+                gpuTemp = gpu.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Temperature && s.Name.Contains("Core"));
             }
         }
 
         public static SystemStatsSnapshot GetSnapshot()
         {
-            if (!ComputerManager.IsMonitoringAvailable)
-            {
-                return new SystemStatsSnapshot();
-            }
+            if (!ComputerManager.Instance.IsMonitoringAvailable || computer == null) return new SystemStatsSnapshot();
 
-            foreach (var hw in ComputerManager.Instance.Hardware) hw.Update();
+            // Update all hardware sensors
+            foreach (var hardware in computer.Hardware) hardware.Update();
 
             return new SystemStatsSnapshot
             {
                 CpuName = cpuName,
                 CpuLoad = cpuLoad?.Value,
                 CpuTemp = cpuTemp?.Value,
-                CpuClockGHz = cpuClock?.Value is float mhz ? mhz / 1000f : null,
+                CpuClockGHz = cpuClock?.Value / 1000f, // Convert MHz to GHz
 
                 RamLoad = ramLoad?.Value,
                 RamUsedGB = ramUsed?.Value,

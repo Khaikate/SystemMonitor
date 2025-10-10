@@ -37,11 +37,15 @@ namespace SystemMonitor
         protected override void OnClosed(EventArgs e)
         {
             timer.Stop();
-            try 
-            { 
-                ComputerManager.Instance.Close(); 
+            try
+            {
+                // Only close the computer object if monitoring was available
+                if (ComputerManager.Instance.IsMonitoringAvailable)
+                {
+                    ComputerManager.Instance.Computer.Close();
+                }
             }
-            catch 
+            catch
             { 
                 // Ignore exceptions on close
             }

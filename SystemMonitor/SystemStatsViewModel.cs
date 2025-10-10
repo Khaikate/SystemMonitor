@@ -25,7 +25,7 @@ public partial class SystemStatsViewModel : ObservableObject
 
     public async Task RefreshAsync()
     {
-        if (!ComputerManager.IsMonitoringAvailable)
+        if (!ComputerManager.Instance.IsMonitoringAvailable)
         {
             return; // Don't do anything if we can't monitor
         }

@@ -86,10 +86,12 @@
                  <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" Text="{Binding GpuLoad, StringFormat={}{0:F1}%}" Foreground="LightGreen"/>
-                    <TextBlock Grid.Column="1" Text="{Binding GpuTemp, StringFormat={}{0:F1}°C}" Foreground="LightGreen" HorizontalAlignment="Right"/>
+                    <TextBlock Grid.Column="1" Text="{Binding Fps, StringFormat={}{} FPS}" Foreground="LightGreen" HorizontalAlignment="Center" Margin="10,0,10,0"/>
+                    <TextBlock Grid.Column="2" Text="{Binding GpuTemp, StringFormat={}{0:F1}°C}" Foreground="LightGreen" HorizontalAlignment="Right"/>
                 </Grid>
 
             </StackPanel>

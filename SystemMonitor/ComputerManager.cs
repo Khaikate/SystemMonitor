@@ -1,29 +1,39 @@
 using LibreHardwareMonitor.Hardware;
+using System;
 using System.Diagnostics;
 
-public static class ComputerManager
+namespace SystemMonitor
 {
-    public static readonly Computer Instance = new()
+    public sealed class ComputerManager
     {
-        IsCpuEnabled = true,
-        IsGpuEnabled = true,
-        IsMemoryEnabled = true
-    };
+        // Thread-safe Singleton implementation using Lazy<T>
+        private static readonly Lazy<ComputerManager> lazyInstance = new(() => new ComputerManager());
+        public static ComputerManager Instance => lazyInstance.Value;
 
-    public static bool IsMonitoringAvailable { get; private set; }
+        public Computer Computer { get; }
+        public bool IsMonitoringAvailable { get; }
 
-    static ComputerManager()
-    {
-        try 
-        { 
-            Instance.Open();
-            IsMonitoringAvailable = true;
-        }
-        catch (Exception ex)
+        // Private constructor ensures a single instance
+        private ComputerManager()
         {
-            Debug.WriteLine($"Lỗi khi khởi tạo theo dõi phần cứng: {ex.Message}");
-            IsMonitoringAvailable = false;
-            /* ignore nếu không có quyền admin */ 
+            Computer = new Computer
+            {
+                IsCpuEnabled = true,
+                IsGpuEnabled = true,
+                IsMemoryEnabled = true,
+            };
+
+            try
+            {
+                Computer.Open();
+                IsMonitoringAvailable = true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error initializing hardware monitoring: {ex.Message}");
+                IsMonitoringAvailable = false;
+                // Silently ignore if lacking admin rights, the UI will show a message.
+            }
         }
     }
 }
